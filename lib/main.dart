@@ -22,25 +22,13 @@ class MyApp extends StatelessWidget {
             "Berguglia & Picone Locator App",
           ),
         ),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              //new GetLocator("1", "1", "NB007CB"),
-            ],
-          ),
-        ),
+        body: GetLocator(),
       ),
     );
   }
 }
 
 class GetLocator extends StatefulWidget {
-  final String fTrasporto;
-  final String fAutista;
-  final String fTarga;
-
-  GetLocator(this.fTrasporto, this.fAutista, this.fTarga);
-
   @override
   GetLocatorState createState() => new GetLocatorState();
 }
@@ -59,20 +47,29 @@ class GetLocatorState extends State<GetLocator> {
   }
 
   Future<String> makeRequest() async {
+    var response;
+    globals.inputFTrasporto = "1";
+    globals.inputFAutista = "1";
+    globals.inputFTarga = "NB007CB";
     print("invio");
-    var response = await http.post(
-      Uri.encodeFull(url),
-      headers: {"Accept": "text/html"},
-      body: {
-        "fAppCtrFlg": "hfy6389jhg", //chiave di sicurezza per poter scrivere
-        "fTrasporto": widget.fTrasporto,
-        "fAutista": widget.fAutista,
-        "fTarga": widget.fTarga,
-        "fData": DateTime.now().toIso8601String(),
-        "fLatitudine": userLocation.latitude.toString(),
-        "fLongitudine": userLocation.longitude.toString(),
-      },
-    );
+    if (globals.inputFTrasporto != null &&
+        globals.inputFAutista != null &&
+        globals.inputFTarga != null) {
+      response = await http.post(
+        Uri.encodeFull(url),
+        headers: {"Accept": "text/html"},
+        body: {
+          "fAppCtrFlg": "hfy6389jhg", //chiave di sicurezza per poter scrivere
+          "fTrasporto": globals.inputFTrasporto,
+          "fAutista": globals.inputFAutista,
+          "fTarga": globals.inputFTarga,
+          "fData": DateTime.now().toIso8601String(),
+          "fLatitudine": userLocation.latitude.toString(),
+          "fLongitudine": userLocation.longitude.toString(),
+        },
+      );
+    }
+
     print(response.body);
   }
 
